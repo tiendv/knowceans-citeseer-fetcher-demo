@@ -64,7 +64,7 @@ public class CsxOaiFetcher {
 	 * @throws SQLException
 	 */
 	public static void main(String[] args) throws SQLException {
-		String base = "C:/datasets/citeseerx/citeseerx-oai/oaidump-";
+		String base = "C:/Users/Administrator/Dropbox/Data/CiteSeerx/oaidump-";
 		// base = args[0];
 		CsxOaiFetcher cf = new CsxOaiFetcher(base);
 		cf.fetch();
