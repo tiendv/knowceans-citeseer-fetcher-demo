@@ -37,7 +37,7 @@ public class CsxParser extends DefaultHandler {
 
 	public static void main(String[] args) {
 		Conf.overridePropFile("csx.conf");
-		String base = "C:/datasets/citeseerx/oaidump-";
+		String base = "C:/Users/Administrator/Dropbox/Data/CiteSeerx/oaidump-";
 		CsxParser c = new CsxParser();
 		try {
 			c.parse(base + "0.xml");
