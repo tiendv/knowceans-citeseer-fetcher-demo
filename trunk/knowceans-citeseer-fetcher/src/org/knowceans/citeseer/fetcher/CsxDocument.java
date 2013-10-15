@@ -21,11 +21,12 @@ public class CsxDocument {
 	String description;
 	String relations;
         String publisher;
+        String source; 
 
 	@Override
 	public String toString() {
 		return String.format("\nID=%s\nT=%s\nA=%s\nD=%s\nC=%s,L=%s\nR=%s\n",
-				id, title, authors, description, tags, language, relations,publisher);
+				id, title, authors, description, tags, language, relations,publisher,source);
 	}
 
 }
