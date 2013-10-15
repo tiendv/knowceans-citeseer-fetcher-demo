@@ -47,7 +47,7 @@ public class CsxParser extends DefaultHandler {
 	private SAXParser saxParser;
 	List<String> taglist = Arrays.asList(new String[] { "identifier",
 			"dc:title", "dc:description", "dc:date", "dc:language",
-			"dc:creator", "dc:subject", "dc:relation","dc:publisher" });
+			"dc:creator", "dc:subject", "dc:relation","dc:publisher","dc:source" });
 	String[] docdata = null;
 	int state = -1;
 
@@ -113,6 +113,7 @@ public class CsxParser extends DefaultHandler {
                                 doc.tags = docdata[6];
                                 doc.relations = docdata[7];
                                 doc.publisher = docdata[8];
+                                doc.source = docdata[9];
 
                                 docs.add(doc);
 
@@ -120,8 +121,11 @@ public class CsxParser extends DefaultHandler {
 
                                //paper.setIdPaper(Integer.parseInt(doc.id));
                                paper = new Paper();
+                               paper.setDoiID(docdata[0]);
                                paper.setTitle(docdata[1] );
-                               paper.setAbstract1(docdata[2]);                           
+                               paper.setAbstract1(docdata[2]);  
+                               paper.setDoiRef( docdata[7]);
+                               paper.setUrl(docdata[9]);
                                // Check author
                                String[] splits = docdata[5].split("\\|"); 
                                for(String temp: splits){

@@ -58,6 +58,10 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Paper.findByCdrom", query = "SELECT p FROM Paper p WHERE p.cdrom = :cdrom"),
     @NamedQuery(name = "Paper.findByCite", query = "SELECT p FROM Paper p WHERE p.cite = :cite")})
 public class Paper implements Serializable {
+    @Column(name = "doiID")
+    private String doiID;
+    @Column(name = "doiRef")
+    private String doiRef;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -465,6 +469,22 @@ public class Paper implements Serializable {
     @Override
     public String toString() {
         return "uit.tkorg.entities.Paper[ idPaper=" + idPaper + " ]";
+    }
+
+    public String getDoiID() {
+        return doiID;
+    }
+
+    public void setDoiID(String doiID) {
+        this.doiID = doiID;
+    }
+
+    public String getDoiRef() {
+        return doiRef;
+    }
+
+    public void setDoiRef(String doiRef) {
+        this.doiRef = doiRef;
     }
     
 }
