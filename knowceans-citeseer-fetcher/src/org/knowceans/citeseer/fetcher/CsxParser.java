@@ -5,9 +5,12 @@ package org.knowceans.citeseer.fetcher;
 
 import java.io.CharArrayReader;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -17,6 +20,11 @@ import org.knowceans.util.Conf;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+import uit.tkorg.bo.AuthorBO;
+import uit.tkorg.bo.Author_PaperBO;
+import uit.tkorg.bo.PaperBO;
+import uit.tkorg.bo.PublisherBO;
+import uit.tkorg.entities.Paper;
 
 /**
  * CsxParser parses the xml files to extract document information.
@@ -26,21 +34,29 @@ import org.xml.sax.helpers.DefaultHandler;
  * @version draft (quickly written but functional)
  */
 public class CsxParser extends DefaultHandler {
-
+        
+    private Paper paper;
+    private List<Integer> listIdAuthor;
+    private int idConference=0;
+    private int idJournal=0;
+    private int idPulisher=0;
+    private int idMagazine=0;
+    private int idPaperType=0;
+    
 	ArrayList<CsxDocument> docs;
 	private SAXParser saxParser;
 	List<String> taglist = Arrays.asList(new String[] { "identifier",
 			"dc:title", "dc:description", "dc:date", "dc:language",
-			"dc:creator", "dc:subject", "dc:relation" });
+			"dc:creator", "dc:subject", "dc:relation","dc:publisher" });
 	String[] docdata = null;
 	int state = -1;
 
 	public static void main(String[] args) {
 		Conf.overridePropFile("csx.conf");
-		String base = "C:/Users/Administrator/Dropbox/Data/CiteSeerx/oaidump-";
+		String base = "C:/CiteSeerx/oaidump-";
 		CsxParser c = new CsxParser();
 		try {
-			c.parse(base + "0.xml");
+			c.parse(base + "5.xml");
 			System.out.println(c.docs);
 		} catch (SAXException e) {
 			e.printStackTrace();
@@ -85,17 +101,47 @@ public class CsxParser extends DefaultHandler {
 			Attributes attributes) throws SAXException {
 		if (qName.equals("record")) {
 			if (docdata != null && docdata[0] != null) {
-				CsxDocument doc = new CsxDocument();
-				// save previous document
-				doc.id = docdata[0];
-				doc.title = docdata[1];
-				doc.description = docdata[2];
-				doc.date = docdata[3];
-				doc.language = docdata[4];
-				doc.authors = docdata[5];
-				doc.tags = docdata[6];
-				doc.relations = docdata[7];
-				docs.add(doc);
+                            try {
+                                CsxDocument doc = new CsxDocument();
+                                // save previous document
+                                doc.id = docdata[0];
+                                doc.title = docdata[1];
+                                doc.description = docdata[2];
+                                doc.date = docdata[3];
+                                doc.language = docdata[4];
+                                doc.authors = docdata[5];
+                                doc.tags = docdata[6];
+                                doc.relations = docdata[7];
+                                doc.publisher = docdata[8];
+
+                                docs.add(doc);
+
+                                // Get thong tin dua vao doi tuong
+
+                               //paper.setIdPaper(Integer.parseInt(doc.id));
+                               paper = new Paper();
+                               paper.setTitle(docdata[1] );
+                               paper.setAbstract1(docdata[2]);                           
+                               // Check author
+                               String[] splits = docdata[5].split("\\|"); 
+                               for(String temp: splits){
+                                        AuthorBO.insertAuthor(temp);
+                                        listIdAuthor.add(AuthorBO.findAuthorId(temp));
+                               }
+                               // Check publisher
+                               PublisherBO.insertPublisher(docdata[8]);
+                               idPulisher = PublisherBO.findPublisherId(docdata[8]);
+                               
+                               // Insert paper
+                               PaperBO.insertPaper(paper, idJournal, idConference, idMagazine, idPulisher, idPaperType);
+                               for (Integer idAuthor : listIdAuthor)
+                                {
+                                    Author_PaperBO.insertAuthorPaper(idAuthor, PaperBO.getCurrIdPaper());
+                                }
+                            } catch (SQLException ex) {
+                                Logger.getLogger(CsxParser.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                               
 			}
 			docdata = new String[taglist.size()];
 		} else {
