@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -123,9 +124,12 @@ public class CsxParser extends DefaultHandler {
                                paper = new Paper();
                                paper.setDoiID(docdata[0]);
                                paper.setTitle(docdata[1] );
+                               if(docdata[2]!=null && docdata[2].length()<500)
                                paper.setAbstract1(docdata[2]);  
+                               
                                paper.setDoiRef( docdata[7]);
                                paper.setUrl(docdata[9]);
+                               listIdAuthor = new LinkedList<>();
                                // Check author
                                String[] splits = docdata[5].split("\\|"); 
                                for(String temp: splits){
@@ -133,11 +137,15 @@ public class CsxParser extends DefaultHandler {
                                         listIdAuthor.add(AuthorBO.findAuthorId(temp));
                                }
                                // Check publisher
-                               PublisherBO.insertPublisher(docdata[8]);
-                               idPulisher = PublisherBO.findPublisherId(docdata[8]);
+                               if(docdata[8]!=null)
+                               {
+                                PublisherBO.insertPublisher(docdata[8]);
+                                idPulisher = PublisherBO.findPublisherId(docdata[8]);
+                               }
                                
                                // Insert paper
                                PaperBO.insertPaper(paper, idJournal, idConference, idMagazine, idPulisher, idPaperType);
+                               
                                for (Integer idAuthor : listIdAuthor)
                                 {
                                     Author_PaperBO.insertAuthorPaper(idAuthor, PaperBO.getCurrIdPaper());

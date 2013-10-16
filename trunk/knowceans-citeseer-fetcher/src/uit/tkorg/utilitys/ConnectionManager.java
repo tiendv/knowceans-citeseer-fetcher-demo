@@ -32,7 +32,7 @@ public class ConnectionManager {
         int maxPool = 20;
         int maxSize = 20;
         int idleTimeout = 18000; //18 sec
-        String url = "jdbc:mysql://localhost:3306/publicationguru";
+        String url = "jdbc:mysql://localhost:3306/citeseerxdatabase";
         String userName = "root";
         String password = "root";
         connectionPool = new ConnectionPool(poolName, minPool, maxPool, maxSize, idleTimeout, url, userName, password);
