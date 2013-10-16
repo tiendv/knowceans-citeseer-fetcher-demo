@@ -54,11 +54,14 @@ public class CsxParser extends DefaultHandler {
 
 	public static void main(String[] args) {
 		Conf.overridePropFile("csx.conf");
-		String base = "C:/CiteSeerx/oaidump-";
+		String base = "C:/Users/Administrator/Dropbox/Data/CiteSeerx/oaidump-";
 		CsxParser c = new CsxParser();
 		try {
-			c.parse(base + "5.xml");
-			System.out.println(c.docs);
+                    for(int i=1; i<1540; i++)
+                    {
+			c.parse(base + i +".xml");
+			System.out.println(i);
+                    }
 		} catch (SAXException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -131,10 +134,13 @@ public class CsxParser extends DefaultHandler {
                                paper.setUrl(docdata[9]);
                                listIdAuthor = new LinkedList<>();
                                // Check author
-                               String[] splits = docdata[5].split("\\|"); 
-                               for(String temp: splits){
-                                        AuthorBO.insertAuthor(temp);
-                                        listIdAuthor.add(AuthorBO.findAuthorId(temp));
+                               if(docdata[5]!=null)
+                               {
+                                String[] splits = docdata[5].split("\\|"); 
+                                for(String temp: splits){
+                                         AuthorBO.insertAuthor(temp);
+                                         listIdAuthor.add(AuthorBO.findAuthorId(temp));
+                                }
                                }
                                // Check publisher
                                if(docdata[8]!=null)
@@ -145,11 +151,13 @@ public class CsxParser extends DefaultHandler {
                                
                                // Insert paper
                                PaperBO.insertPaper(paper, idJournal, idConference, idMagazine, idPulisher, idPaperType);
-                               
-                               for (Integer idAuthor : listIdAuthor)
-                                {
-                                    Author_PaperBO.insertAuthorPaper(idAuthor, PaperBO.getCurrIdPaper());
-                                }
+                               if(!listIdAuthor.isEmpty())
+                               {
+                                for (Integer idAuthor : listIdAuthor)
+                                 {
+                                     Author_PaperBO.insertAuthorPaper(idAuthor, PaperBO.getCurrIdPaper());
+                                 }
+                               }
                             } catch (SQLException ex) {
                                 Logger.getLogger(CsxParser.class.getName()).log(Level.SEVERE, null, ex);
                             }
