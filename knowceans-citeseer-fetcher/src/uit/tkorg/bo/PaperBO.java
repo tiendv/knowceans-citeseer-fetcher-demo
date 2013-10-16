@@ -32,8 +32,8 @@ public class PaperBO {
             String sql = "INSERT into paper (idPaper, doi,isbn,url,title,abstract,volume,"
                     + "pages,year,viewPublication,bibTex,endNote,idJournal,idConference,"
                     + "idMagazine,idPublisher,idPaperType,dblpKey,version,paperFile,adress,"
-                    + "number,month,ee,crossref,series,school,chapter,cdrom,cite) VALUES" 
-                    + "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"; 
+                    + "number,month,doiID,doiRef,ee,crossref,series,school,chapter,cdrom,cite) VALUES" 
+                    + "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"; 
             try
             {
                 PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -68,23 +68,30 @@ public class PaperBO {
                     preparedStatement.setInt(16, idPublisher);
                 else
                     preparedStatement.setNull(16, Types.INTEGER);
-                preparedStatement.setInt(17, idPaperType);
+                if (idPaperType > 0)
+                    preparedStatement.setInt(17, idPaperType);
+                else;
+                    preparedStatement.setNull(17, Types.INTEGER);
+                    
                 preparedStatement.setString(18, paper.getDblpKey());
                 if (paper.getVersion() != null)
                     preparedStatement.setInt(19, paper.getVersion());
                 else
                     preparedStatement.setNull(19, Types.INTEGER);
+                
                 preparedStatement.setString(20, paper.getPaperFile());
                 preparedStatement.setString(21, paper.getAdress());
                 preparedStatement.setString(22, paper.getNumber());
                 preparedStatement.setString(23, paper.getMonth());
-                preparedStatement.setString(24, paper.getEe());
-                preparedStatement.setString(25, paper.getCrossref());
-                preparedStatement.setString(26, paper.getSeries());
-                preparedStatement.setString(27, paper.getSchool());
-                preparedStatement.setString(28, paper.getChapter());
-                preparedStatement.setString(29, paper.getCdrom());
-                preparedStatement.setString(30, paper.getCite());
+                preparedStatement.setString(24, paper.getDoiID());
+                preparedStatement.setString(25, paper.getDoiRef());
+                preparedStatement.setString(26, paper.getEe());
+                preparedStatement.setString(27, paper.getCrossref());
+                preparedStatement.setString(28, paper.getSeries());
+                preparedStatement.setString(29, paper.getSchool());
+                preparedStatement.setString(30, paper.getChapter());
+                preparedStatement.setString(31, paper.getCdrom());
+                preparedStatement.setString(32, paper.getCite());
                 preparedStatement.executeUpdate();
             }
             catch(Exception ex)

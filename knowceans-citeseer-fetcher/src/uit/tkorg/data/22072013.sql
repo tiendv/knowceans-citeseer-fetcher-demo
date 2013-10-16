@@ -351,7 +351,7 @@ CREATE TABLE `paper` (
   `number` varchar(20) default NULL,
   `month` varchar(30) default NULL,
   `doiID` varchar(1000) default NULL,
-  `doiRef` varchar(1000) default NULL,
+  `doiRef` varchar(5000) default NULL,
   `ee` varchar(1000) default NULL,
   `crossref` varchar(50) default NULL,
   `series` varchar(100) default NULL,
